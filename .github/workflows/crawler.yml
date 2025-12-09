@@ -1,0 +1,27 @@
+name: Hot News Crawler
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天 UTC 0 点运行（对应北京时间早上 8 点，想改时间可以问我）
+  workflow_dispatch:  # 允许手动触发测试
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'  # 适配项目的 Python 版本
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Run crawler
+        env:
+          WEWORK_WEBHOOK_URL: ${{ secrets.WEWORK_WEBHOOK_URL }}
+        run: python main.py
